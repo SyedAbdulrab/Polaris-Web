@@ -7,6 +7,10 @@ RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
 FROM node:22-alpine AS build
 WORKDIR /app
+# NEXT_PUBLIC_* env vars are inlined into the JS bundle at build time, NOT read at runtime.
+# So we accept it as a build arg and re-export it as an env var the build step can see.
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
