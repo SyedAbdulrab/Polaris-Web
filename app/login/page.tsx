@@ -43,47 +43,56 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">
-            <span className="text-star-500">★</span> Polaris
-          </h1>
-          <p className="text-slate-400 mt-2 text-sm">Your north-star metrics.</p>
+    <main className="relative flex min-h-screen items-center justify-center px-4 py-10">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <div className="absolute -top-40 left-1/2 h-[460px] w-[820px] -translate-x-1/2 rounded-full bg-star-500/15 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-[300px] w-[600px] rounded-full bg-info/10 blur-3xl" />
+      </div>
+
+      <div className="relative w-full max-w-md">
+        <div className="mb-10 text-center">
+          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-xl bg-star-500/10 text-3xl text-star-500 shadow-glow">
+            ★
+          </div>
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight">Polaris</h1>
+          <p className="mt-1.5 text-sm text-soft">Your north-star life metrics.</p>
         </div>
 
-        <div className="card">
-          <div className="mb-5 flex gap-2 rounded-lg bg-ink-800 p-1">
+        <div className="card animate-fade-in">
+          <div className="mb-5 grid grid-cols-2 rounded-lg bg-elevated p-1">
             <button
               type="button"
               onClick={() => setMode('login')}
-              className={`flex-1 rounded-md py-2 text-sm font-medium transition ${
-                mode === 'login' ? 'bg-ink-950 text-star-500' : 'text-slate-400'
+              className={`rounded-md py-2 text-sm font-medium transition-all ${
+                mode === 'login' ? 'bg-canvas text-text shadow-soft' : 'text-mute hover:text-soft'
               }`}
             >
-              Login
+              Sign in
             </button>
             <button
               type="button"
               onClick={() => setMode('register')}
-              className={`flex-1 rounded-md py-2 text-sm font-medium transition ${
-                mode === 'register' ? 'bg-ink-950 text-star-500' : 'text-slate-400'
+              className={`rounded-md py-2 text-sm font-medium transition-all ${
+                mode === 'register' ? 'bg-canvas text-text shadow-soft' : 'text-mute hover:text-soft'
               }`}
             >
-              Register
+              Create account
             </button>
           </div>
 
           <form onSubmit={submit} className="space-y-4">
             {mode === 'register' && (
               <div>
-                <label className="label" htmlFor="name">Name (optional)</label>
+                <label className="label" htmlFor="name">Name</label>
                 <input
                   id="name"
                   className="input"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Abdul"
+                  placeholder="What should we call you?"
                 />
               </div>
             )}
@@ -93,10 +102,11 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 required
+                autoComplete="email"
                 className="input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="me@polaris.local"
+                placeholder="you@example.com"
               />
             </div>
             <div>
@@ -106,21 +116,51 @@ export default function LoginPage() {
                 type="password"
                 required
                 minLength={8}
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 className="input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="At least 8 characters"
               />
             </div>
 
-            {error && <div className="text-sm text-bad">{error}</div>}
+            {error && (
+              <div className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-xs text-danger">
+                {error}
+              </div>
+            )}
 
             <button type="submit" disabled={busy} className="btn-primary w-full">
-              {busy ? '...' : mode === 'login' ? 'Sign in' : 'Create account'}
+              {busy ? (
+                <>
+                  <Spinner /> {mode === 'login' ? 'Signing in…' : 'Creating account…'}
+                </>
+              ) : mode === 'login' ? (
+                'Sign in →'
+              ) : (
+                'Create account →'
+              )}
             </button>
           </form>
         </div>
+
+        <p className="mt-6 text-center text-2xs text-mute">
+          {mode === 'login' ? (
+            <>New here? <button onClick={() => setMode('register')} className="text-star-400 hover:underline">Create an account</button>.</>
+          ) : (
+            <>Already have one? <button onClick={() => setMode('login')} className="text-star-400 hover:underline">Sign in</button>.</>
+          )}
+        </p>
       </div>
     </main>
+  );
+}
+
+function Spinner() {
+  return (
+    <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.25" strokeWidth="3" />
+      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
   );
 }

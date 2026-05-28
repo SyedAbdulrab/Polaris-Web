@@ -85,8 +85,52 @@ export interface ProjectionScenario {
   endingNet: number;
 }
 
+export type AccountKind =
+  | 'CHECKING'
+  | 'SAVINGS'
+  | 'CASH'
+  | 'CREDIT_CARD'
+  | 'INVESTMENT'
+  | 'LOAN'
+  | 'OTHER';
+
+export type TransactionKind = 'INFLOW' | 'OUTFLOW' | 'TRANSFER' | 'ADJUSTMENT';
+
+export interface Account {
+  id: string;
+  name: string;
+  kind: AccountKind;
+  // ISO-4217 code, account's native currency. Balances and transactions on this
+  // account are denominated in this currency.
+  currency: string;
+  institution: string | null;
+  openingBalance: string;
+  openingDate: string;
+  isActive: boolean;
+  archivedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  currentBalance: number;
+}
+
+export interface Transaction {
+  id: string;
+  accountId: string;
+  date: string;
+  amount: string;
+  kind: TransactionKind;
+  category: string | null;
+  description: string | null;
+  sourceIncomeId: string | null;
+  sourceExpenseId: string | null;
+  transferToAccountId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface DashboardPayload {
   asOf: string;
+  monthStart: string;
   metrics: ComputedMetrics;
   scenarios: {
     baseline: ProjectionScenario;
@@ -99,4 +143,6 @@ export interface DashboardPayload {
   goals: Goal[];
   activeIncomeSources: IncomeSource[];
   activeExpenses: Expense[];
+  accounts: Account[];
+  monthTransactions: Transaction[];
 }
