@@ -13,7 +13,9 @@ ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+# Ensure public/ exists even when the repo doesn't track it (it's often empty,
+# so git omits it). Next.js won't create it, and the runtime stage COPYs it.
+RUN mkdir -p public && npm run build
 
 FROM node:22-alpine AS runtime
 ENV NODE_ENV=production \
